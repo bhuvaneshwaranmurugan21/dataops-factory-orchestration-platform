@@ -55,9 +55,17 @@ resource "aws_dynamodb_table" "callbacks" {
 
   global_secondary_index {
     name            = "state-updated-index"
-    hash_key        = "state"
-    range_key       = "updated_at"
     projection_type = "KEYS_ONLY"
+
+    key_schema {
+      attribute_name = "state"
+      key_type       = "HASH"
+    }
+
+    key_schema {
+      attribute_name = "updated_at"
+      key_type       = "RANGE"
+    }
   }
 
   ttl {
