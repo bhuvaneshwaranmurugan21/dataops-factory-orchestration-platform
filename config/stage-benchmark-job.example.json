@@ -1,0 +1,14 @@
+{
+  "pipeline_id": "dataops-factory",
+  "plan_digest": "sha256:79aa8f48731a859d00d2e3c78305f596c8ec5857bfa82f7f8d6b16c1de62b931",
+  "registry_commit": "project-4-reference-v1",
+  "job_id": "commerce_contract_quality",
+  "artifact_digest": "sha256:57b211ceaf9bbd606f4698bacefc68a7295eba34d381831ce70cf0b8356bb274",
+  "quality_policy": [
+    "completeness",
+    "contract"
+  ],
+  "cost_budget_usd": 0.5,
+  "profile_id": "commerce-lambda-v1",
+  "timeout_seconds": 300
+}

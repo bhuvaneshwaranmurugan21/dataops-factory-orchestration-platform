@@ -1,0 +1,3 @@
+# Managed runtimes provide these packages; pin and audit the direct compatibility surface.
+boto3==1.43.67
+pyspark==3.5.6

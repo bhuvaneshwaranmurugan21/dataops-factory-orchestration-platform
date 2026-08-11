@@ -1,0 +1,869 @@
+{
+  "pipeline_id": "dataops-factory",
+  "registry_version": 1,
+  "accounts": [
+    "control-plane",
+    "commerce-data",
+    "finance-data",
+    "customer-data",
+    "operations-data"
+  ],
+  "jobs": [
+    {
+      "job_id": "register_snapshot",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:3377555c648d8627b39954bd99fcfc56574ed4b9fea6079d375b2bd2a4acc816",
+      "dependencies": [],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "validate_contracts",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:28b3a0785fc5fa2ca795e9a24f2c4f1a81fd5f2cd5c357b67e63165b98bc4dba",
+      "dependencies": [
+        "register_snapshot"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "open_run_budget",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:5a909be0a064412f27d382846ae0130a5f8dd3df87966ea390342e406721f3c2",
+      "dependencies": [
+        "register_snapshot"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "commerce_orders_ingest",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:b7fba2f2c7608b1d7978efdfd415394b9e2fed7c8517500c1bc5a2bf8c3bc6fc",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "commerce-glue-v1"
+    },
+    {
+      "job_id": "commerce_inventory_ingest",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:e2648a8a6ab439ea51a059afc597e92e203c6ba927209d3a6c9471417a2cde6e",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "commerce-glue-v1"
+    },
+    {
+      "job_id": "commerce_shipments_ingest",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:408fed59e0f5d2375705c0809f17eb58566c54e3fd0f355c6fbd01784e82f1f2",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "commerce-glue-v1"
+    },
+    {
+      "job_id": "commerce_contract_quality",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:57b211ceaf9bbd606f4698bacefc68a7295eba34d381831ce70cf0b8356bb274",
+      "dependencies": [
+        "commerce_orders_ingest",
+        "commerce_inventory_ingest",
+        "commerce_shipments_ingest"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "commerce-lambda-v1"
+    },
+    {
+      "job_id": "commerce_fulfillment_join",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "emr_serverless",
+      "artifact_digest": "sha256:0a8552d61d8553fc66ecf8886012fcab8fe0e7da1b3ab70943174905a6e6cb94",
+      "dependencies": [
+        "commerce_orders_ingest",
+        "commerce_inventory_ingest",
+        "commerce_shipments_ingest",
+        "commerce_contract_quality"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 7200,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 10800,
+      "cost_budget_usd": 25,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "commerce-emr-v1"
+    },
+    {
+      "job_id": "commerce_daily_mart",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:6a502fc7e6e2c46ab0a620a393b043b6747565bc8ce200e8164ada281df42d79",
+      "dependencies": [
+        "commerce_fulfillment_join"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "commerce-glue-v1"
+    },
+    {
+      "job_id": "commerce_publish_check",
+      "owner": "commerce-analytics",
+      "workload_account": "commerce-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:b8b9f6f56632b4e5c2a6f54d3c655dc12941f0092eefaa2d5caf52f979074978",
+      "dependencies": [
+        "commerce_daily_mart"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "commerce-lambda-v1"
+    },
+    {
+      "job_id": "finance_payments_ingest",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:27b196fdb89c68f9c4879bf49ecf1633d0a4230cc8b9a12c105820274714d582",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "finance-glue-v1"
+    },
+    {
+      "job_id": "finance_settlements_ingest",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:c5684ce46b2492a4cd3ba54a45c9d88a818617f28db72eb7db99f9968619e98e",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "finance-glue-v1"
+    },
+    {
+      "job_id": "finance_refunds_ingest",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:523ce1af9f553a2115e6878f60041d2b9407ef6d5e6c8a1ac8393e7d70e515e2",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": false,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "finance-glue-v1"
+    },
+    {
+      "job_id": "finance_ledger_quality",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:c1d2a4ec79dda8febef95c40d0e0063dcca31786ab1b946a1126751e819a232a",
+      "dependencies": [
+        "finance_payments_ingest",
+        "finance_settlements_ingest",
+        "finance_refunds_ingest"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "finance-lambda-v1"
+    },
+    {
+      "job_id": "finance_reconcile",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "emr_serverless",
+      "artifact_digest": "sha256:3ef2825a38c957ada6b819c25aee751b018600a643420077c111594f0e8492c5",
+      "dependencies": [
+        "finance_payments_ingest",
+        "finance_settlements_ingest",
+        "finance_refunds_ingest",
+        "finance_ledger_quality"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 7200,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 10800,
+      "cost_budget_usd": 25,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "finance-emr-v1"
+    },
+    {
+      "job_id": "finance_revenue_mart",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:b24484926303c1860d6eb5118055c0636805820c962c075efb38d607dc0c6490",
+      "dependencies": [
+        "finance_reconcile"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "finance-glue-v1"
+    },
+    {
+      "job_id": "finance_publish_check",
+      "owner": "finance-analytics",
+      "workload_account": "finance-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:0817866ce6219898c3e8a5a09eb0aea987ea1a145dd47fa6240b47873a2c5606",
+      "dependencies": [
+        "finance_revenue_mart"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "finance-lambda-v1"
+    },
+    {
+      "job_id": "customer_events_ingest",
+      "owner": "customer-analytics",
+      "workload_account": "customer-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:26f48f9ba338b44d1a018c593afa751aecf21e9fe7dd9649f7b2fd4f92562201",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "customer-glue-v1"
+    },
+    {
+      "job_id": "customer_profiles_ingest",
+      "owner": "customer-analytics",
+      "workload_account": "customer-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:5d19bc6476f88f694dd835959ba82e668f0f28b0732e07f9926e146ef41a14bc",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "customer-glue-v1"
+    },
+    {
+      "job_id": "customer_consent_check",
+      "owner": "customer-analytics",
+      "workload_account": "customer-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:c8ed3c252204288b2d8beebfc376247edd27bb76fe3679fc5c744e5dbd1da7ab",
+      "dependencies": [
+        "validate_contracts"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "customer-lambda-v1"
+    },
+    {
+      "job_id": "customer_privacy_quality",
+      "owner": "customer-analytics",
+      "workload_account": "customer-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:b7aa9d7cf701137bfb68755fac8575e8cadd3234b823567454720ebce1be1a8a",
+      "dependencies": [
+        "customer_events_ingest",
+        "customer_profiles_ingest",
+        "customer_consent_check"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "customer-lambda-v1"
+    },
+    {
+      "job_id": "customer_sessionize",
+      "owner": "customer-analytics",
+      "workload_account": "customer-data",
+      "adapter_type": "emr_serverless",
+      "artifact_digest": "sha256:f38721a316d0998508554039a03526b0819abaa455533ead25504b238c1d9dfc",
+      "dependencies": [
+        "customer_events_ingest",
+        "customer_profiles_ingest",
+        "customer_privacy_quality"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 7200,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 10800,
+      "cost_budget_usd": 25,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "customer-emr-v1"
+    },
+    {
+      "job_id": "customer_engagement_mart",
+      "owner": "customer-analytics",
+      "workload_account": "customer-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:e765812d5665bfa802d477fd97a1fb9be59564d4e62b4f34f0a8faeae903ddf0",
+      "dependencies": [
+        "customer_sessionize"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "customer-glue-v1"
+    },
+    {
+      "job_id": "operations_support_ingest",
+      "owner": "operations-analytics",
+      "workload_account": "operations-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:ff8a7058d2be85a660ee483825db5d994af8bb954c20eb4c77ee1905e9023f80",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "operations-glue-v1"
+    },
+    {
+      "job_id": "operations_logistics_ingest",
+      "owner": "operations-analytics",
+      "workload_account": "operations-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:b54160d53a0d9456aaa8bce0b588d7b9e1736f1aff1e0388935e703c96b9d8a4",
+      "dependencies": [
+        "validate_contracts",
+        "open_run_budget"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "freshness",
+        "row_count"
+      ],
+      "execution_profile": "operations-glue-v1"
+    },
+    {
+      "job_id": "operations_incident_check",
+      "owner": "operations-analytics",
+      "workload_account": "operations-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:ef099dfa3fa85f9b89d308d0268ff9eeaca55b11fc03ececa8209a655cf4bd1d",
+      "dependencies": [
+        "validate_contracts"
+      ],
+      "mandatory": false,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "operations-lambda-v1"
+    },
+    {
+      "job_id": "operations_freshness_quality",
+      "owner": "operations-analytics",
+      "workload_account": "operations-data",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:331c760618d782306ce7157e201f1f3cc822f10acf534eef5e8e475f7831ce11",
+      "dependencies": [
+        "operations_support_ingest",
+        "operations_logistics_ingest",
+        "operations_incident_check"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "operations-lambda-v1"
+    },
+    {
+      "job_id": "operations_service_health",
+      "owner": "operations-analytics",
+      "workload_account": "operations-data",
+      "adapter_type": "emr_serverless",
+      "artifact_digest": "sha256:b16d0753ae3f66fdc36ae03c084c9fbfffb49d9030137d2b348599a79e4a1c78",
+      "dependencies": [
+        "operations_support_ingest",
+        "operations_logistics_ingest",
+        "operations_freshness_quality"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 7200,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 10800,
+      "cost_budget_usd": 25,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "operations-emr-v1"
+    },
+    {
+      "job_id": "operations_daily_mart",
+      "owner": "operations-analytics",
+      "workload_account": "operations-data",
+      "adapter_type": "glue",
+      "artifact_digest": "sha256:8909150004914706bb9657e65911e08cd8d30e9c8e325df7c964e9821651aa9b",
+      "dependencies": [
+        "operations_service_health"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 3600,
+      "retry_class": "transient",
+      "max_attempts": 3,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 5400,
+      "cost_budget_usd": 8,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "operations-glue-v1"
+    },
+    {
+      "job_id": "validate_required_branches",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:b1c2a207939b93b90b6844b174772d2a71bd6e64d2d1d09c6cca41f31b1fdb24",
+      "dependencies": [
+        "commerce_publish_check",
+        "finance_publish_check",
+        "customer_engagement_mart",
+        "operations_daily_mart"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "reconcile_lineage",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:81da6f2e0c8edb607c3bc2256bdede0a6fb4dd7ff9786a6b89a4d60405060a18",
+      "dependencies": [
+        "commerce_publish_check",
+        "finance_publish_check",
+        "customer_engagement_mart",
+        "operations_daily_mart"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "reconcile_costs",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:a2920a2605708ef42c5c43298844dc6762d75821ec853820421d07388f342298",
+      "dependencies": [
+        "open_run_budget",
+        "commerce_publish_check",
+        "finance_publish_check",
+        "customer_engagement_mart",
+        "operations_daily_mart"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "schema",
+        "row_count",
+        "uniqueness",
+        "referential_integrity"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "prepare_publication",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:05b1a49a7642b3f8322b15efb7e0752c53eeb5d86825afaf1c13c4bd958e254b",
+      "dependencies": [
+        "validate_required_branches",
+        "reconcile_lineage",
+        "reconcile_costs"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "validate_manifest_set",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:b0833dc79170993b35f46cabce8c5be3e31ce417ef350b7b5370777ada3bd857",
+      "dependencies": [
+        "prepare_publication"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "none",
+      "max_attempts": 1,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-lambda-v1"
+    },
+    {
+      "job_id": "activate_catalog",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:48469f29eb8bf0ce62a85b6c4fe5ce0421a56cd1e4eacc11332e56ea00633028",
+      "dependencies": [
+        "validate_manifest_set"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-publication-v1"
+    },
+    {
+      "job_id": "audit_publication",
+      "owner": "data-platform",
+      "workload_account": "control-plane",
+      "adapter_type": "lambda",
+      "artifact_digest": "sha256:e0680c3c24b066e2e7fd36a0a60b93e301bd0926be53d36bb41875db6a5bbac4",
+      "dependencies": [
+        "activate_catalog"
+      ],
+      "mandatory": true,
+      "timeout_seconds": 300,
+      "retry_class": "throttled",
+      "max_attempts": 4,
+      "idempotency_scope": "${logical_run_key}/${job_id}/${attempt}",
+      "sla_seconds": 900,
+      "cost_budget_usd": 0.5,
+      "quality_policy": [
+        "contract",
+        "completeness"
+      ],
+      "execution_profile": "control-publication-v1"
+    }
+  ]
+}

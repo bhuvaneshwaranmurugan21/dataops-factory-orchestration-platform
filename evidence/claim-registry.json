@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "claims": [
+    {
+      "claim_id": "registry-job-count",
+      "statement": "The reviewed reference registry contains 36 explicit jobs.",
+      "classification": "VERIFIED_REPOSITORY",
+      "source": "contracts/registry/jobs.json",
+      "selector": "jobs",
+      "measure": "length",
+      "expected": 36
+    },
+    {
+      "claim_id": "registry-account-count",
+      "statement": "The topology models one control plane and four workload accounts.",
+      "classification": "VERIFIED_REPOSITORY",
+      "source": "contracts/registry/jobs.json",
+      "selector": "accounts",
+      "measure": "length",
+      "expected": 5
+    },
+    {
+      "claim_id": "compiled-dependency-levels",
+      "statement": "The deterministic compiler emits 12 dependency levels.",
+      "classification": "VERIFIED_REPOSITORY",
+      "source": "orchestration/generated/compiled-plan.json",
+      "selector": "levels",
+      "measure": "length",
+      "expected": 12
+    },
+    {
+      "claim_id": "local-jobs-accepted",
+      "statement": "The local correctness oracle accepted all 36 signed job results.",
+      "classification": "VERIFIED_LOCAL_SIMULATION",
+      "source": "evidence/verified-local/simulation-summary.json",
+      "selector": "jobs_accepted",
+      "expected": 36
+    },
+    {
+      "claim_id": "local-publication-state",
+      "statement": "The local catalog publication completed and exposed PUBLISHED.",
+      "classification": "VERIFIED_LOCAL_SIMULATION",
+      "source": "evidence/verified-local/simulation-summary.json",
+      "selector": "publication.consumer_state",
+      "expected": "PUBLISHED"
+    },
+    {
+      "claim_id": "failure-lab-pass-count",
+      "statement": "Nineteen adversarial correctness trials pass locally.",
+      "classification": "VERIFIED_LOCAL_FAILURE_LAB",
+      "source": "evidence/verified-local/failure-lab-summary.json",
+      "selector": "passed",
+      "expected": 19
+    },
+    {
+      "claim_id": "failure-lab-fail-count",
+      "statement": "No adversarial local correctness trial fails.",
+      "classification": "VERIFIED_LOCAL_FAILURE_LAB",
+      "source": "evidence/verified-local/failure-lab-summary.json",
+      "selector": "failed",
+      "expected": 0
+    },
+    {
+      "claim_id": "aws-stage-boundary",
+      "statement": "Cross-account deployment, managed-service recovery and cloud throughput remain unverified until the stage runbook is executed in real AWS accounts.",
+      "classification": "UNVERIFIED_STAGE_REQUIRED"
+    }
+  ]
+}

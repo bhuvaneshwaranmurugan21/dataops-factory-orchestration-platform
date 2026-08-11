@@ -1,0 +1,29 @@
+{
+  "accounts_modelled": 5,
+  "adapter_counts": {
+    "emr_serverless": 4,
+    "glue": 14,
+    "lambda": 18
+  },
+  "audit_events": 186,
+  "classification": "VERIFIED_LOCAL_SIMULATION",
+  "dependency_levels": 12,
+  "jobs_accepted": 36,
+  "jobs_planned": 36,
+  "limitations": [
+    "Logical accounts are modelled locally; no AWS account was contacted.",
+    "HMAC proves the signing contract locally; AWS stage requires asymmetric KMS.",
+    "Synthetic row counts are correctness fixtures, not throughput measurements.",
+    "SQLite models DynamoDB and Redshift boundaries; managed-service behaviour is stage-gated."
+  ],
+  "manifest_digest_count": 36,
+  "pipeline_id": "dataops-factory",
+  "plan_digest": "sha256:a4d66b59fd0ea58685f5d2db113954d46c5b314824ab378251f66fa60056bcc3",
+  "publication": {
+    "consumer_state": "PUBLISHED",
+    "run_id": "local-run-0001",
+    "version": 1
+  },
+  "registry_commit": "local-reference-v1",
+  "run_id": "local-run-0001"
+}

@@ -1,0 +1,106 @@
+{
+  "classification": "VERIFIED_LOCAL_FAILURE_LAB",
+  "failed": 0,
+  "limitations": [
+    "The failure lab validates local state-machine invariants, not AWS service availability.",
+    "Cross-account IAM, KMS Object Lock and managed-engine recovery remain stage-gated."
+  ],
+  "passed": 19,
+  "trials": [
+    {
+      "detail": "invariant held",
+      "name": "duplicate_logical_run",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "immutable_plan_conflict",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "competing_lease",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "expired_lease_takeover",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "stale_heartbeat",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "stale_run_transition",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "duplicate_attempt",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "conflicting_dispatch_identity",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "illegal_attempt_transition",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "stale_attempt_transition",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "tampered_manifest",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "unbound_manifest_signer",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "stale_manifest_fence",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "duplicate_manifest",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "conflicting_accepted_result",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "mandatory_fanin_block",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "publisher_crash_after_catalog_commit",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "concurrent_publication_version",
+      "status": "passed"
+    },
+    {
+      "detail": "invariant held",
+      "name": "quality_gate_rejection",
+      "status": "passed"
+    }
+  ]
+}

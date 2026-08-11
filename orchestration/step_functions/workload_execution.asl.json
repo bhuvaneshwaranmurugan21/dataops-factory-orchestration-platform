@@ -1,0 +1,66 @@
+{
+  "Comment": "One bounded, fenced workload execution; Airflow owns graph dependencies",
+  "StartAt": "DispatchWorkload",
+  "States": {
+    "DispatchWorkload": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "TimeoutSecondsPath": "$.timeout_seconds",
+      "HeartbeatSeconds": 120,
+      "Parameters": {
+        "FunctionName": "${dispatch_lambda_arn}",
+        "Payload": {
+          "task_token.$": "$$.Task.Token",
+          "request.$": "$"
+        }
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 2,
+          "BackoffRate": 2.0,
+          "MaxAttempts": 3,
+          "JitterStrategy": "FULL"
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.failure",
+          "Next": "MarkFailed"
+        }
+      ],
+      "ResultPath": "$.workload_result",
+      "Next": "ValidateManifest"
+    },
+    "ValidateManifest": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${validate_manifest_lambda_arn}",
+        "Payload.$": "$"
+      },
+      "ResultSelector": {
+        "validation.$": "$.Payload"
+      },
+      "ResultPath": "$.manifest_validation",
+      "Next": "Succeeded"
+    },
+    "MarkFailed": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${mark_failed_lambda_arn}",
+        "Payload.$": "$"
+      },
+      "Next": "Failed"
+    },
+    "Succeeded": {"Type": "Succeed"},
+    "Failed": {"Type": "Fail", "Error": "WorkloadExecutionFailed"}
+  }
+}

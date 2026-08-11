@@ -1,0 +1,146 @@
+{
+  "control-lambda-v1": {
+    "adapter_type": "lambda",
+    "role_arn": "arn:aws:iam::<CONTROL_ACCOUNT_ID>:role/dataops-control-executor",
+    "region": "ap-south-1",
+    "target": "dataops-control-workload",
+    "account_label": "control-plane",
+    "artifact_bucket": "<CONTROL_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<CONTROL_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<CONTROL_ACCOUNT_ID>:key/<CONTROL_SIGNER_KEY_ID>"
+  },
+  "control-publication-v1": {
+    "adapter_type": "lambda",
+    "role_arn": "arn:aws:iam::<CONTROL_ACCOUNT_ID>:role/dataops-control-executor",
+    "region": "ap-south-1",
+    "target": "dataops-publish-catalog",
+    "account_label": "control-plane",
+    "artifact_bucket": "<CONTROL_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<CONTROL_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<CONTROL_ACCOUNT_ID>:key/<CONTROL_SIGNER_KEY_ID>"
+  },
+  "commerce-lambda-v1": {
+    "adapter_type": "lambda",
+    "role_arn": "arn:aws:iam::<COMMERCE_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-commerce-workload",
+    "account_label": "commerce-data",
+    "artifact_bucket": "<COMMERCE_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<COMMERCE_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<COMMERCE_ACCOUNT_ID>:key/<COMMERCE_SIGNER_KEY_ID>"
+  },
+  "commerce-glue-v1": {
+    "adapter_type": "glue",
+    "role_arn": "arn:aws:iam::<COMMERCE_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-commerce-standard",
+    "account_label": "commerce-data",
+    "artifact_bucket": "<COMMERCE_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<COMMERCE_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<COMMERCE_ACCOUNT_ID>:key/<COMMERCE_SIGNER_KEY_ID>"
+  },
+  "commerce-emr-v1": {
+    "adapter_type": "emr_serverless",
+    "role_arn": "arn:aws:iam::<COMMERCE_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "<COMMERCE_EMR_APPLICATION_ID>",
+    "execution_role_arn": "arn:aws:iam::<COMMERCE_ACCOUNT_ID>:role/dataops-emr-runtime",
+    "account_label": "commerce-data",
+    "artifact_bucket": "<COMMERCE_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<COMMERCE_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<COMMERCE_ACCOUNT_ID>:key/<COMMERCE_SIGNER_KEY_ID>"
+  },
+  "finance-lambda-v1": {
+    "adapter_type": "lambda",
+    "role_arn": "arn:aws:iam::<FINANCE_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-finance-workload",
+    "account_label": "finance-data",
+    "artifact_bucket": "<FINANCE_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<FINANCE_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<FINANCE_ACCOUNT_ID>:key/<FINANCE_SIGNER_KEY_ID>"
+  },
+  "finance-glue-v1": {
+    "adapter_type": "glue",
+    "role_arn": "arn:aws:iam::<FINANCE_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-finance-standard",
+    "account_label": "finance-data",
+    "artifact_bucket": "<FINANCE_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<FINANCE_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<FINANCE_ACCOUNT_ID>:key/<FINANCE_SIGNER_KEY_ID>"
+  },
+  "finance-emr-v1": {
+    "adapter_type": "emr_serverless",
+    "role_arn": "arn:aws:iam::<FINANCE_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "<FINANCE_EMR_APPLICATION_ID>",
+    "execution_role_arn": "arn:aws:iam::<FINANCE_ACCOUNT_ID>:role/dataops-emr-runtime",
+    "account_label": "finance-data",
+    "artifact_bucket": "<FINANCE_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<FINANCE_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<FINANCE_ACCOUNT_ID>:key/<FINANCE_SIGNER_KEY_ID>"
+  },
+  "customer-lambda-v1": {
+    "adapter_type": "lambda",
+    "role_arn": "arn:aws:iam::<CUSTOMER_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-customer-workload",
+    "account_label": "customer-data",
+    "artifact_bucket": "<CUSTOMER_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<CUSTOMER_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<CUSTOMER_ACCOUNT_ID>:key/<CUSTOMER_SIGNER_KEY_ID>"
+  },
+  "customer-glue-v1": {
+    "adapter_type": "glue",
+    "role_arn": "arn:aws:iam::<CUSTOMER_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-customer-standard",
+    "account_label": "customer-data",
+    "artifact_bucket": "<CUSTOMER_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<CUSTOMER_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<CUSTOMER_ACCOUNT_ID>:key/<CUSTOMER_SIGNER_KEY_ID>"
+  },
+  "customer-emr-v1": {
+    "adapter_type": "emr_serverless",
+    "role_arn": "arn:aws:iam::<CUSTOMER_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "<CUSTOMER_EMR_APPLICATION_ID>",
+    "execution_role_arn": "arn:aws:iam::<CUSTOMER_ACCOUNT_ID>:role/dataops-emr-runtime",
+    "account_label": "customer-data",
+    "artifact_bucket": "<CUSTOMER_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<CUSTOMER_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<CUSTOMER_ACCOUNT_ID>:key/<CUSTOMER_SIGNER_KEY_ID>"
+  },
+  "operations-lambda-v1": {
+    "adapter_type": "lambda",
+    "role_arn": "arn:aws:iam::<OPERATIONS_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-operations-workload",
+    "account_label": "operations-data",
+    "artifact_bucket": "<OPERATIONS_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<OPERATIONS_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<OPERATIONS_ACCOUNT_ID>:key/<OPERATIONS_SIGNER_KEY_ID>"
+  },
+  "operations-glue-v1": {
+    "adapter_type": "glue",
+    "role_arn": "arn:aws:iam::<OPERATIONS_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "dataops-operations-standard",
+    "account_label": "operations-data",
+    "artifact_bucket": "<OPERATIONS_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<OPERATIONS_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<OPERATIONS_ACCOUNT_ID>:key/<OPERATIONS_SIGNER_KEY_ID>"
+  },
+  "operations-emr-v1": {
+    "adapter_type": "emr_serverless",
+    "role_arn": "arn:aws:iam::<OPERATIONS_ACCOUNT_ID>:role/dataops-workload-executor",
+    "region": "ap-south-1",
+    "target": "<OPERATIONS_EMR_APPLICATION_ID>",
+    "execution_role_arn": "arn:aws:iam::<OPERATIONS_ACCOUNT_ID>:role/dataops-emr-runtime",
+    "account_label": "operations-data",
+    "artifact_bucket": "<OPERATIONS_ARTIFACT_BUCKET>",
+    "manifest_bucket": "<OPERATIONS_MANIFEST_BUCKET>",
+    "signer_key_arn": "arn:aws:kms:ap-south-1:<OPERATIONS_ACCOUNT_ID>:key/<OPERATIONS_SIGNER_KEY_ID>"
+  }
+}

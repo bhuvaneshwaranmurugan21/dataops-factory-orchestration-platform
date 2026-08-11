@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=80,<86"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dataops-factory-orchestration-platform"
+version = "0.1.0"
+description = "Metadata-driven, multi-account AWS data-workload orchestration control plane"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+dataops-factory = "dataops_factory.cli:main"
+
+[project.optional-dependencies]
+dev = [
+  "bandit==1.8.6",
+  "mypy==1.17.1",
+  "pip-audit==2.9.0",
+  "python-hcl2==7.3.1",
+  "pytest==9.0.3",
+  "pytest-cov==6.2.1",
+  "ruff==0.12.8",
+]
+aws = ["boto3==1.43.67"]
+spark = ["pyspark==3.5.6"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers --cov=dataops_factory --cov-report=term-missing --cov-fail-under=90"
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["spark: tests requiring a local Spark runtime"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/dataops_factory"]

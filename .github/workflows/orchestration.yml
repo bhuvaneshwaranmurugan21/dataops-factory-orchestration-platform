@@ -1,0 +1,38 @@
+name: Orchestration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Recompile immutable plan
+        run: >-
+          dataops-factory compile
+          --registry contracts/registry/jobs.json
+          --output /tmp/compiled-plan.json
+          --registry-commit project-4-reference-v1
+      - run: diff -u orchestration/generated/compiled-plan.json /tmp/compiled-plan.json
+      - name: Regenerate local evidence
+        run: python scripts/refresh_evidence.py
+      - run: git diff --exit-code -- evidence/verified-local
+      - name: Build deterministic runtime artifacts twice
+        run: |
+          make package
+          cp dist/lambdas/checksums.json /tmp/lambda-checksums.json
+          cp dist/spark_jobs/checksums.json /tmp/spark-checksums.json
+          make package
+          diff -u /tmp/lambda-checksums.json dist/lambdas/checksums.json
+          diff -u /tmp/spark-checksums.json dist/spark_jobs/checksums.json
