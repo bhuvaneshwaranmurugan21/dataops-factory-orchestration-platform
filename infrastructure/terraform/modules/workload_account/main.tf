@@ -265,11 +265,11 @@ resource "aws_glue_job" "standard" {
     script_location = "s3://${aws_s3_bucket.artifacts.id}/${aws_s3_object.standard_job.key}"
   }
   default_arguments = {
-    "--extra-py-files"                          = "s3://${aws_s3_bucket.artifacts.id}/${aws_s3_object.spark_bundle.key}"
-    "--enable-continuous-cloudwatch-log"        = "true"
-    "--enable-metrics"                          = "true"
-    "--enable-observability-metrics"            = "true"
-    "--job-bookmark-option"                     = "job-bookmark-disable"
+    "--extra-py-files"                   = "s3://${aws_s3_bucket.artifacts.id}/${aws_s3_object.spark_bundle.key}"
+    "--enable-continuous-cloudwatch-log" = "true"
+    "--enable-metrics"                   = "true"
+    "--enable-observability-metrics"     = "true"
+    "--job-bookmark-option"              = "job-bookmark-disable"
   }
 }
 

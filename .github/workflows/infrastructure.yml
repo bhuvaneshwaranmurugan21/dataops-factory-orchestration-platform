@@ -13,11 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.8"
+      - run: terraform fmt -check -recursive infrastructure/terraform
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - run: python scripts/package_lambdas.py
       - run: python scripts/package_spark_jobs.py
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform -chdir=infrastructure/terraform init -backend=false
+      - run: terraform -chdir=infrastructure/terraform init -backend=false -lockfile=readonly
       - run: terraform -chdir=infrastructure/terraform validate
