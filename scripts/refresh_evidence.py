@@ -5,6 +5,7 @@ import json
 import tempfile
 from pathlib import Path
 
+from dataops_factory.provenance import implementation_digest
 from dataops_factory.simulator import run_failure_lab, simulate
 
 REPOSITORY = Path(__file__).resolve().parents[1]
@@ -14,18 +15,6 @@ EVIDENCE = REPOSITORY / "evidence" / "verified-local"
 
 def _write(path: Path, value: object) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
-
-def _implementation_digest() -> str:
-    digest = hashlib.sha256()
-    roots = [REPOSITORY / "src", REPOSITORY / "tests", REPOSITORY / "contracts"]
-    files = sorted(path for root in roots for path in root.rglob("*") if path.is_file())
-    for path in files:
-        digest.update(path.relative_to(REPOSITORY).as_posix().encode())
-        digest.update(b"\0")
-        digest.update(path.read_bytes())
-        digest.update(b"\0")
-    return "sha256:" + digest.hexdigest()
 
 
 def main() -> None:
@@ -40,7 +29,7 @@ def main() -> None:
         EVIDENCE / "provenance.json",
         {
             "classification": "REPRODUCIBLE_LOCAL_EVIDENCE",
-            "implementation_digest": _implementation_digest(),
+            "implementation_digest": implementation_digest(REPOSITORY),
             "registry_sha256": "sha256:" + hashlib.sha256(REGISTRY.read_bytes()).hexdigest(),
             "commands": [
                 "make evidence",

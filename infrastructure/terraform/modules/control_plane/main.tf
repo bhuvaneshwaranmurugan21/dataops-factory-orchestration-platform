@@ -19,8 +19,14 @@ resource "aws_dynamodb_table" "run_ledger" {
   hash_key     = "pk"
   range_key    = "sk"
 
-  attribute { name = "pk" type = "S" }
-  attribute { name = "sk" type = "S" }
+  attribute {
+    name = "pk"
+    type = "S"
+  }
+  attribute {
+    name = "sk"
+    type = "S"
+  }
 
   point_in_time_recovery { enabled = true }
   server_side_encryption {
@@ -34,9 +40,18 @@ resource "aws_dynamodb_table" "callbacks" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "dispatch_key"
 
-  attribute { name = "dispatch_key" type = "S" }
-  attribute { name = "state" type = "S" }
-  attribute { name = "updated_at" type = "N" }
+  attribute {
+    name = "dispatch_key"
+    type = "S"
+  }
+  attribute {
+    name = "state"
+    type = "S"
+  }
+  attribute {
+    name = "updated_at"
+    type = "N"
+  }
 
   global_secondary_index {
     name            = "state-updated-index"
@@ -250,13 +265,13 @@ resource "aws_iam_role_policy" "control_workload" {
 }
 
 resource "aws_redshiftserverless_namespace" "catalog" {
-  namespace_name                    = "${var.project_name}-catalog"
-  db_name                           = "dataops"
-  admin_username                    = "dataops_admin"
-  manage_admin_password             = true
-  admin_password_secret_kms_key_id  = aws_kms_key.control.arn
-  kms_key_id                        = aws_kms_key.control.arn
-  log_exports                       = ["useractivitylog", "userlog"]
+  namespace_name                   = "${var.project_name}-catalog"
+  db_name                          = "dataops"
+  admin_username                   = "dataops_admin"
+  manage_admin_password            = true
+  admin_password_secret_kms_key_id = aws_kms_key.control.arn
+  kms_key_id                       = aws_kms_key.control.arn
+  log_exports                      = ["useractivitylog", "userlog"]
 }
 
 resource "aws_redshiftserverless_workgroup" "catalog" {
@@ -430,7 +445,7 @@ resource "aws_lambda_function" "dispatch" {
   architectures    = local.common_lambda.architectures
   environment {
     variables = {
-      CALLBACK_TABLE            = aws_dynamodb_table.callbacks.name
+      CALLBACK_TABLE             = aws_dynamodb_table.callbacks.name
       CALLBACK_RETENTION_SECONDS = "604800"
       EXECUTION_PROFILES         = jsonencode(local.execution_profiles)
       RUN_LEDGER_TABLE           = aws_dynamodb_table.run_ledger.name
@@ -471,8 +486,8 @@ resource "aws_lambda_function" "reconcile_sweep" {
   architectures    = local.common_lambda.architectures
   environment {
     variables = {
-      CALLBACK_TABLE      = aws_dynamodb_table.callbacks.name
-      RECONCILE_FUNCTION  = aws_lambda_function.reconcile.function_name
+      CALLBACK_TABLE       = aws_dynamodb_table.callbacks.name
+      RECONCILE_FUNCTION   = aws_lambda_function.reconcile.function_name
       RECONCILE_BATCH_SIZE = "100"
     }
   }
@@ -490,8 +505,8 @@ resource "aws_lambda_function" "validate_manifest" {
   architectures    = local.common_lambda.architectures
   environment {
     variables = {
-      MANIFEST_BUCKETS = jsonencode(concat(var.workload_manifest_bucket_names, [aws_s3_bucket.plans.id]))
-      SIGNER_KEY_ARNS   = jsonencode(concat(var.workload_signer_key_arns, [aws_kms_key.signer.arn]))
+      MANIFEST_BUCKETS   = jsonencode(concat(var.workload_manifest_bucket_names, [aws_s3_bucket.plans.id]))
+      SIGNER_KEY_ARNS    = jsonencode(concat(var.workload_signer_key_arns, [aws_kms_key.signer.arn]))
       EXECUTION_PROFILES = jsonencode(local.execution_profiles)
       RUN_LEDGER_TABLE   = aws_dynamodb_table.run_ledger.name
     }
