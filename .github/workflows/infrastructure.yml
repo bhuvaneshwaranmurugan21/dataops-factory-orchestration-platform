@@ -22,5 +22,7 @@ jobs:
           python-version: "3.11"
       - run: python scripts/package_lambdas.py
       - run: python scripts/package_spark_jobs.py
-      - run: terraform -chdir=infrastructure/terraform init -backend=false -lockfile=readonly
+      - run: terraform -chdir=infrastructure/terraform init -backend=false
       - run: terraform -chdir=infrastructure/terraform validate
+      - name: Verify committed provider lock
+        run: git diff --exit-code -- infrastructure/terraform/.terraform.lock.hcl

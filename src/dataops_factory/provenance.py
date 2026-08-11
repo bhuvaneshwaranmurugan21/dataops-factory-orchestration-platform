@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import os
-import subprocess
+import shutil
+import subprocess  # nosec B404
 from pathlib import Path
 
 CANONICAL_ROOTS = ("src", "tests", "contracts")
@@ -12,15 +13,17 @@ class ProvenanceError(RuntimeError):
     """Raised when repository provenance cannot be established safely."""
 
 
+# Git is the provenance authority for this repository-scoped operation.
 def _git_paths(repository: Path, *arguments: str) -> tuple[Path, ...]:
-    try:
-        completed = subprocess.run(
-            ["git", "-C", str(repository), *arguments],
-            check=False,
-            capture_output=True,
-        )
-    except FileNotFoundError as error:
-        raise ProvenanceError("git is required to compute repository provenance") from error
+    git = shutil.which("git")
+    if git is None:
+        raise ProvenanceError("git is required to compute repository provenance")
+    # The absolute executable and all command arguments are controlled; no shell is involved.
+    completed = subprocess.run(  # nosec B603
+        [git, "-C", str(repository), *arguments],
+        check=False,
+        capture_output=True,
+    )
     if completed.returncode != 0:
         detail = completed.stderr.decode(errors="replace").strip()
         raise ProvenanceError(f"unable to inspect canonical repository inputs: {detail}")
