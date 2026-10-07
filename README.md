@@ -1,13 +1,13 @@
 # DataOps Factory Orchestration Platform
 
-[![Quality](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/quality.yml/badge.svg)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/quality.yml)
-[![Orchestration](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/orchestration.yml/badge.svg)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/orchestration.yml)
-[![Infrastructure](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/infrastructure.yml/badge.svg)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/infrastructure.yml)
-[![Spark](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/spark.yml/badge.svg)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/spark.yml)
-[![Security](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/security.yml/badge.svg)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/security.yml)
-![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
-![AWS](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazonwebservices&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+[![Quality](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/quality.yml)
+[![Orchestration](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/orchestration.yml/badge.svg?branch=main)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/orchestration.yml)
+[![Infrastructure](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/infrastructure.yml/badge.svg?branch=main)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/infrastructure.yml)
+[![Spark](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/spark.yml/badge.svg?branch=main)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/spark.yml)
+[![Security](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/bhuvaneshwaranmurugan21/dataops-factory-orchestration-platform/actions/workflows/security.yml)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](pyproject.toml)
+[![AWS](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazonwebservices&logoColor=white)](docs/ARCHITECTURE.md)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 I built this control plane to compile a versioned workload registry into a deterministic,
 multi-account execution graph. Airflow owns dependency scheduling; one bounded Step Functions
